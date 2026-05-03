@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eliminar cuenta — Maneja</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #080c16;
+      --surface:   #0d1424;
+      --border:    rgba(255,255,255,0.07);
+      --text:      #e2e8f0;
+      --muted:     #64748b;
+      --accent:    #2563eb;
+      --accent-glow: rgba(37,99,235,0.35);
+      --red:       #ef4444;
+      --red-soft:  rgba(239,68,68,0.10);
+      --green:     #10b981;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px 80px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Ambient background glow */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 40% at 20% 10%, rgba(37,99,235,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 30% at 80% 80%, rgba(239,68,68,0.05) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 560px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Logo ── */
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .logo-ring {
+      width: 36px;
+      height: 36px;
+      flex-shrink: 0;
+    }
+
+    .logo-name {
+      font-size: 20px;
+      font-weight: 900;
+      color: white;
+      letter-spacing: -0.5px;
+    }
+
+    /* ── Header ── */
+    .header {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: var(--red-soft);
+      border: 1px solid rgba(239,68,68,0.25);
+      color: #fca5a5;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      width: fit-content;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--red);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+
+    h1 {
+      font-size: clamp(28px, 6vw, 40px);
+      font-weight: 900;
+      color: white;
+      letter-spacing: -1px;
+      line-height: 1.1;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .card-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 16px;
+    }
+
+    .card-icon.blue  { background: rgba(37,99,235,0.15);  border: 1px solid rgba(37,99,235,0.3); }
+    .card-icon.red   { background: rgba(239,68,68,0.12);  border: 1px solid rgba(239,68,68,0.28); }
+    .card-icon.green { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.28); }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .card-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .card-body {
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* ── Steps ── */
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .step {
+      display: flex;
+      gap: 14px;
+      position: relative;
+    }
+
+    .step:not(:last-child) .step-line {
+      position: absolute;
+      left: 15px;
+      top: 32px;
+      bottom: -14px;
+      width: 1px;
+      background: var(--border);
+    }
+
+    .step-num {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(37,99,235,0.15);
+      border: 1px solid rgba(37,99,235,0.3);
+      color: #93c5fd;
+      font-size: 12px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .step-content {
+      flex: 1;
+      padding-bottom: 20px;
+    }
+
+    .step-content p {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .step-content p strong {
+      color: white;
+      font-weight: 700;
+    }
+
+    /* ── Email CTA ── */
+    .email-block {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: rgba(37,99,235,0.06);
+      border: 1px solid rgba(37,99,235,0.2);
+    }
+
+    .email-label {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .email-label span {
+      display: block;
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+
+    .email-label a {
+      color: #93c5fd;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      font-family: 'DM Mono', monospace;
+      word-break: break-all;
+    }
+
+    .email-label a:hover { color: white; }
+
+    .copy-btn {
+      padding: 8px 14px;
+      border-radius: 8px;
+      background: rgba(37,99,235,0.18);
+      border: 1px solid rgba(37,99,235,0.3);
+      color: #93c5fd;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .copy-btn:hover { background: rgba(37,99,235,0.30); color: white; }
+    .copy-btn.copied { background: rgba(16,185,129,0.18); border-color: rgba(16,185,129,0.3); color: #6ee7b7; }
+
+    /* ── Data list ── */
+    .data-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .data-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+
+    .data-row svg { flex-shrink: 0; }
+
+    /* ── Info box ── */
+    .info-box {
+      display: flex;
+      gap: 10px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: rgba(16,185,129,0.05);
+      border: 1px solid rgba(16,185,129,0.2);
+      font-size: 13px;
+      color: #a7f3d0;
+      line-height: 1.5;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .footer a {
+      color: #64748b;
+      text-decoration: none;
+    }
+
+    .footer a:hover { color: var(--text); }
+
+    @media (max-width: 480px) {
+      body { padding: 28px 16px 60px; }
+      .card-body { padding: 16px 18px; }
+      .card-header { padding: 16px 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+
+    <!-- Logo -->
+    <a class="logo" href="https://maneja.cl">
+      <svg class="logo-ring" viewBox="0 0 200 200" fill="none">
+        <circle cx="100" cy="100" r="80" stroke="white" stroke-width="14"/>
+        <path d="M 95 95 C 85 85, 58 76, 38 84" stroke="white" stroke-width="9" stroke-linecap="round"/>
+        <path d="M 105 95 C 115 85, 142 76, 162 84" stroke="white" stroke-width="9" stroke-linecap="round"/>
+        <path d="M 100 115 L 100 175" stroke="white" stroke-width="9" stroke-linecap="round"/>
+        <circle cx="100" cy="100" r="18" fill="white"/>
+        <circle cx="100" cy="100" r="12" fill="#0a0f1a"/>
+        <circle cx="100" cy="100" r="6" fill="white"/>
+      </svg>
+      <span class="logo-name">Maneja</span>
+    </a>
+
+    <!-- Header -->
+    <div class="header">
+      <div class="badge">
+        <div class="badge-dot"></div>
+        Privacidad del usuario
+      </div>
+      <h1>Eliminar cuenta y datos</h1>
+      <p class="subtitle">
+        Puedes solicitar la eliminación de tu cuenta y todos los datos asociados en cualquier momento. Procesamos tu solicitud en un plazo máximo de <strong style="color: #e2e8f0;">7 días hábiles</strong>.
+      </p>
+    </div>
+
+    <!-- Pasos -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon blue">📋</div>
+        <div>
+          <div class="card-title">Cómo solicitar la eliminación</div>
+          <div class="card-sub">Proceso simple en 2 pasos</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="steps">
+          <div class="step">
+            <div class="step-line"></div>
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <p>Envía un correo a <strong>contacto.manejacl@gmail.com</strong> con el asunto <strong>"Eliminar mi cuenta"</strong>.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <p>Incluye en el mensaje el <strong>correo electrónico</strong> con el que te registraste en Maneja.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Email CTA -->
+        <div class="email-block">
+          <div class="email-label">
+            <span>Correo de contacto</span>
+            <a href="mailto:contacto.manejacl@gmail.com?subject=Eliminar mi cuenta">
+              contacto.manejacl@gmail.com
+            </a>
+          </div>
+          <button class="copy-btn" id="copyBtn" onclick="copyEmail()">Copiar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Datos eliminados -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon red">🗑️</div>
+        <div>
+          <div class="card-title">Datos que se eliminan</div>
+          <div class="card-sub">Eliminación permanente e irreversible</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="data-list">
+          <div class="data-row">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/></svg>
+            Cuenta de usuario y credenciales de acceso
+          </div>
+          <div class="data-row">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/></svg>
+            Historial completo de exámenes realizados
+          </div>
+          <div class="data-row">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/></svg>
+            Estadísticas y progreso de práctica
+          </div>
+          <div class="data-row">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/></svg>
+            Datos de perfil (nombre, preferencias)
+          </div>
+          <div class="data-row">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/></svg>
+            Información de suscripción Pro
+          </div>
+        </div>
+
+        <div class="info-box">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="9" stroke="#10b981" stroke-width="2"/><path d="M12 8v4M12 16h.01" stroke="#10b981" stroke-width="2" stroke-linecap="round"/></svg>
+          No retenemos ningún dato después de procesar la solicitud. La eliminación es permanente y no se puede deshacer.
+        </div>
+      </div>
+    </div>
+
+    <!-- Plazo -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon green">⏱️</div>
+        <div>
+          <div class="card-title">Plazo de procesamiento</div>
+          <div class="card-sub">Máximo 7 días hábiles desde la solicitud</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <p style="font-size:14px;color:#94a3b8;line-height:1.6;">
+          Una vez recibida tu solicitud, te enviaremos una confirmación al correo indicado y procesaremos la eliminación en un máximo de <strong style="color:white;">7 días hábiles</strong>. Recibirás un correo de confirmación cuando el proceso esté completado.
+        </p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p>© 2025 Maneja · Preparación examen teórico CONASET</p>
+      <p style="margin-top:6px;">
+        <a href="mailto:contacto.manejacl@gmail.com">contacto.manejacl@gmail.com</a>
+        &nbsp;·&nbsp;
+        <a href="https://maneja.cl">maneja.cl</a>
+      </p>
+    </div>
+
+  </div>
+
+  <script>
+    function copyEmail() {
+      navigator.clipboard.writeText('contacto.manejacl@gmail.com').then(() => {
+        const btn = document.getElementById('copyBtn');
+        btn.textContent = '¡Copiado!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = 'Copiar';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>
